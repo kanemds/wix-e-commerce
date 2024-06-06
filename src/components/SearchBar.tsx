@@ -10,17 +10,15 @@ const SearchBar = () => {
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const formData = new FormData(e.currentTarget)
-    const name = formData.get("search") as string
+    // const formData = new FormData(e.currentTarget)
+    // const name = formData.get("search") as string
 
-    // const element = e.currentTarget
-    // const nameInput = element.elements.namedItem("search") as HTMLInputElement
-    // const name = nameInput.value
-    // const name = (e.currentTarget.elements.namedItem("search") as HTMLInputElement)?.value
-    console.log(name)
-    // if (name) {
-    //   router.push(`/list?name=${name}`)
-    // }
+
+    const name = (e.currentTarget.elements.namedItem("search") as HTMLInputElement)?.value
+
+    if (name) {
+      router.push(`/list?name=${name}`)
+    }
   }
 
   return (
