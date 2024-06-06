@@ -17,6 +17,9 @@ const config: Config = {
       colors: {
         cartRed: "#F35C7A",
       },
+      boxShadow: {
+        general: "0 3px 10px rgb(0,0,0,0.2)",
+      },
     },
   },
   plugins: [],
