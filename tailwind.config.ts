@@ -20,6 +20,10 @@ const config: Config = {
       boxShadow: {
         general: "0 3px 10px rgb(0,0,0,0.2)",
       },
+      height: {
+        // in html classname= h-[calc(100vh-80px)] no space
+        general: "calc(100vh - 80px)",
+      },
     },
   },
   plugins: [],
