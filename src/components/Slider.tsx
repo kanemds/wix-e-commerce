@@ -130,10 +130,10 @@ const Slider = () => {
         <Swiper
           slidesPerView={1}
           spaceBetween={30}
-          autoplay={{
-            delay: 2500,
-            disableOnInteraction: false,
-          }}
+          // autoplay={{
+          //   delay: 2500,
+          //   disableOnInteraction: true,
+          // }}
           loop={true}
           pagination={{
             clickable: true,
