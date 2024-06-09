@@ -25,3 +25,8 @@
 ::-webkit-scrollbar-thumb:hover {
   background: rgb(107 114 128);
 }
+
+select option {
+
+  border-radius: none !important;
+}
