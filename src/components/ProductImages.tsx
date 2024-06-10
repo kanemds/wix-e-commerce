@@ -29,7 +29,7 @@ const ProductImages = () => {
 
   return (
     <div >
-      <div className="h-[500px] relative">
+      <div className="h-[500px]  relative">
         <Image
           src={images[index].url}
           alt=""
