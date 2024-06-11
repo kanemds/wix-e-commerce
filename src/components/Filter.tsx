@@ -50,8 +50,8 @@ const Filter = () => {
           onChange={handleFilterChange}
         >
           <option>Category</option>
-          <option value="">New Arrival</option>
-          <option value="">Popular</option>
+          <option value="new arrival">New Arrival</option>
+          <option value="popular">Popular</option>
         </select>
         <select
           name=""
