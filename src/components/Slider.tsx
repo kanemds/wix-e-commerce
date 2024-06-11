@@ -144,9 +144,8 @@ const Slider = () => {
           className="mySwiper"
         >
           {slides && slides?.map(slide => (
-            <SwiperSlide>
+            <SwiperSlide key={slide.id}>
               <div
-                key={slide.id}
                 className={`${slide?.bg} w-screen h-full flex flex-col gap-16 md:flex-row`}
               >
                 {/* text container */}

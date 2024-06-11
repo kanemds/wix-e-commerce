@@ -45,8 +45,8 @@ const NavIcons = () => {
       <Image src="/notification.png" alt="" width={22} height={22} className="cursor-pointer" />
 
       {/* shopping cart icon */}
-      <div className="cursor-pointer relative">
-        <Image src="/cart.png" alt="" width={22} height={22} onClick={handleCart} />
+      <div className="cursor-pointer relative" onClick={handleCart} >
+        <Image src="/cart.png" alt="" width={22} height={22} />
         <div className="absolute  -top-4 -right-4 w-6 h-6 bg-cartRed text-sm text-white flex items-center justify-center rounded-full">
           2
         </div>
