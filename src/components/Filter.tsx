@@ -13,6 +13,8 @@ const Filter = () => {
     const { name, value } = e.target
     const params = new URLSearchParams(searchParams)
     params.set(name, value)
+    // replace the current url with all the selected option not redirect
+    // inbetween each selected & will be
     replace(`${pathname}?${params.toString()}`)
   }
 
@@ -56,9 +58,10 @@ const Filter = () => {
         <select
           name=""
           id=""
-          className="py-2 px-4 rounded-2xl text-xs font-medium bg-gray-100"
+          className="py-2 px-4 rounded text-xs font-medium bg-gray-100"
         >
           <option>All Filters</option>
+
         </select>
       </div>
       <div className="">
