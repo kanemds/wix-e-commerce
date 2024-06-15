@@ -31,24 +31,22 @@ const CustomeizeProducts = ({
   )
 
 
-
   const isVariantInStock = (choices: { [key: string]: string }) => {
 
-
-    // Check if there exists at least one variant that matches all selected options
     return checkInstock.some(variant => {
       const variantChoices = variant.choices
-
       if (!variantChoices) return false
 
+      console.log(Object.entries(choices))
       return Object.entries(choices).every(([key, value]: [string, string]) => variantChoices[key] === value)
     })
   }
 
 
+
   useEffect(() => {
     if (Object.keys(selectedOptions).length === 0) {
-      setSelectedOptions({ "Color": "White" })
+      setSelectedOptions({ "Color": checkInstock[0]?.choices?.Color! })
     }
   }, [])
 
