@@ -9,8 +9,6 @@ const CategoryList = async () => {
 
   const { items: catergories } = await wixClient.collections.queryCollections().find()
 
-  console.log(catergories[5].media?.mainMedia)
-
   return (
     // <div className="overflow-x-scroll scrollbar-hide">
     <div className="mt-12 overflow-x-scroll">

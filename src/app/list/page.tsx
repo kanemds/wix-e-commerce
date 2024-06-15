@@ -7,13 +7,14 @@ import { Suspense } from "react"
 
 const ListPage = async ({ searchParams }: { searchParams: any }) => {
 
-  console.log(searchParams)
+
+  // console.log(searchParams) // list/page
 
   const wixClient = await wixClientServer()
 
   const categories = await wixClient.collections.getCollectionBySlug(searchParams.cat || "all-products")
 
-  console.log(categories)
+
 
   return (
     <div className="px-4 md:px-8 lg:px-16 xl:32 2xl:px-64 relative">
