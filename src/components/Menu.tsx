@@ -15,8 +15,6 @@ const Menu = () => {
     setOpen(prev => !prev)
   }
 
-  console.log(open)
-
   useEffect(() => {
     if (!isMobile) {
       setOpen(false)
