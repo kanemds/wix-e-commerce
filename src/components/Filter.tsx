@@ -15,15 +15,15 @@ const Filter = () => {
   ) => {
     const { name, value } = e.target
     const params = new URLSearchParams(searchParams)
+
     if (value.trim() === '') {
       params.delete(name) // Delete the key if value is empty or whitespace
     } else {
       params.set(name, value) // Set the parameter with non-empty value
     }
-
-
     replace(`${pathname}?${params.toString()}`)
   }
+
 
 
   return (
@@ -79,7 +79,7 @@ const Filter = () => {
           className="py-2 px-4 rounded-2xl text-xs font-medium bg-gray-100 ring-1 ring-gray-400 "
           onChange={handleFilterChange}
         >
-          <option >Sort By</option>
+          <option value="">Sort By</option>
           <option value="asc price">Price (low to high)</option>
           <option value="desc price">Price (high to low)</option>
           <option value="desc lastUpdated">Newest</option>
