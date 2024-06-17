@@ -2,21 +2,29 @@
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 
+
 const Filter = () => {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const { replace } = useRouter()
+
+
 
   const handleFilterChange = (
     e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
   ) => {
     const { name, value } = e.target
     const params = new URLSearchParams(searchParams)
-    params.set(name, value)
-    // replace the current url with all the selected option not redirect
-    // inbetween each selected & will be
+    if (value.trim() === '') {
+      params.delete(name) // Delete the key if value is empty or whitespace
+    } else {
+      params.set(name, value) // Set the parameter with non-empty value
+    }
+
+
     replace(`${pathname}?${params.toString()}`)
   }
+
 
   return (
     <div className="mt-12 flex justify-between">
@@ -27,7 +35,7 @@ const Filter = () => {
           className="  py-2 px-4 rounded-2xl text-xs font-medium bg-gray-100 "
           onChange={handleFilterChange}
         >
-          <option>Type</option>
+          <option value="">Type</option>
           <option value="physical">Physical</option>
           <option value="digital">Digital</option>
         </select>
@@ -51,7 +59,7 @@ const Filter = () => {
           className="py-2 px-4 rounded-2xl text-xs font-medium bg-gray-100"
           onChange={handleFilterChange}
         >
-          <option>Category</option>
+          <option value="">Category</option>
           <option value="new arrival">New Arrival</option>
           <option value="popular">Popular</option>
         </select>
@@ -71,11 +79,11 @@ const Filter = () => {
           className="py-2 px-4 rounded-2xl text-xs font-medium bg-gray-100 ring-1 ring-gray-400 "
           onChange={handleFilterChange}
         >
-          <option>Sort By</option>
+          <option >Sort By</option>
           <option value="asc price">Price (low to high)</option>
           <option value="desc price">Price (high to low)</option>
-          <option value="asc lastUpdated">Newest</option>
-          <option value="desc lastUpdated">Oldest</option>
+          <option value="desc lastUpdated">Newest</option>
+          <option value="asc lastUpdated">Oldest</option>
         </select>
       </div>
     </div >

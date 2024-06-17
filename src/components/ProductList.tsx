@@ -21,14 +21,42 @@ const ProductList = async ({
 
   const wixClient = await wixClientServer()
 
-  const responseObj = await wixClient.products.queryProducts().eq("collectionIds", categoryId).limit(limit || productPerPage).find()
+  const productQuery = wixClient.products.queryProducts()
+    .startsWith("name", searchParams?.name || "")
+    .eq("collectionIds", categoryId)
+    .hasSome("productType", searchParams?.type ? [searchParams.type] : ["physical", "digital"])
+    .gt("priceData.price", searchParams?.min || 0)
+    .lt("priceData.price", searchParams?.max || 9999)
+    .limit(limit || productPerPage)
+  // .find()
 
+  let responseObj
+  //  searchParams?.sort value is from filter name <select name="sort"></select>
+  if (searchParams?.sort) {
+    const [sortType, sortBy] = searchParams.sort.split(" ")
+
+    if (sortType === "asc") {
+      responseObj = await productQuery.ascending(sortBy).find()
+      return responseObj
+    }
+    if (sortType === "desc") {
+
+      responseObj = await productQuery.descending(sortBy).find()
+
+    }
+  } else {
+    return responseObj = await productQuery.find()
+  }
+
+
+
+  // const responseObj = await productQuery.find()
 
 
   return (
     <div className="mt-12 flex gap-x-8 gap-y-16 justify-between flex-wrap">
       {/* {responseObj.items.map((product:products.Product) => ( */}
-      {responseObj.items.map((product: products.Product) => (
+      {responseObj && responseObj?.items.map((product: products.Product) => (
 
         <Link key={product?._id} href={"/" + product.slug} className="w-full flex flex-col gap-4 sm:w-[45%] lg:w-[22%]">
           <div className="relative w-full h-80">
