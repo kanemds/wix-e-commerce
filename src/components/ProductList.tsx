@@ -3,13 +3,15 @@
 import { wixClientServer } from "@/lib/wixClientServer"
 import { products } from "@wix/stores"
 import DOMPurify from "isomorphic-dompurify"
+import { cookies } from "next/headers"
 
 import Image from "next/image"
 import Link from "next/link"
+import Pagination from "./Pagination"
 
 
 
-const productPerPage = 20
+const productPerPage = 8
 
 const ProductList = async ({
   categoryId, limit, searchParams
@@ -21,42 +23,45 @@ const ProductList = async ({
 
   const wixClient = await wixClientServer()
 
-  const productQuery = wixClient.products.queryProducts()
+  const productQuery = wixClient.products
+    .queryProducts()
     .startsWith("name", searchParams?.name || "")
     .eq("collectionIds", categoryId)
-    .hasSome("productType", searchParams?.type ? [searchParams.type] : ["physical", "digital"])
+    .hasSome(
+      "productType",
+      searchParams?.type ? [searchParams.type] : ["physical", "digital"]
+    )
     .gt("priceData.price", searchParams?.min || 0)
-    .lt("priceData.price", searchParams?.max || 9999)
+    .lt("priceData.price", searchParams?.max || 999999)
     .limit(limit || productPerPage)
+    .skip(searchParams?.page ? (parseInt(searchParams.page) * (limit || productPerPage)) : 0)
   // .find()
 
+
   let responseObj
-  //  searchParams?.sort value is from filter name <select name="sort"></select>
+
   if (searchParams?.sort) {
+
     const [sortType, sortBy] = searchParams.sort.split(" ")
 
     if (sortType === "asc") {
+
       responseObj = await productQuery.ascending(sortBy).find()
-      return responseObj
     }
     if (sortType === "desc") {
 
       responseObj = await productQuery.descending(sortBy).find()
-
     }
   } else {
-    return responseObj = await productQuery.find()
+    responseObj = await productQuery.find()
   }
 
-
-
-  // const responseObj = await productQuery.find()
 
 
   return (
     <div className="mt-12 flex gap-x-8 gap-y-16 justify-between flex-wrap">
       {/* {responseObj.items.map((product:products.Product) => ( */}
-      {responseObj && responseObj?.items.map((product: products.Product) => (
+      {responseObj && responseObj?.items?.map((product: products.Product) => (
 
         <Link key={product?._id} href={"/" + product.slug} className="w-full flex flex-col gap-4 sm:w-[45%] lg:w-[22%]">
           <div className="relative w-full h-80">
@@ -95,6 +100,7 @@ const ProductList = async ({
           <button className="rounded-2xl ring-1 w-max ring-cartRed text-cartRed py-2 px-4 text-xs hover:bg-cartRed hover:text-white">Add to Cart</button>
         </Link>
       ))}
+      <Pagination currentPage={responseObj?.currentPage || 0} hasPrev={responseObj?.hasPrev()} hasNext={responseObj?.hasNext()} />
     </div>
   )
 }
