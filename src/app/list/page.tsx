@@ -5,10 +5,7 @@ import Image from "next/image"
 import { Suspense } from "react"
 
 
-const ListPage = async ({ searchParams }: { searchParams: any }) => {
-
-
-  // console.log(searchParams) // list/page
+const ListPage = async ({ searchParams, params }: { searchParams: any, params: any }) => {
 
   const wixClient = await wixClientServer()
 
@@ -39,7 +36,7 @@ const ListPage = async ({ searchParams }: { searchParams: any }) => {
       <Filter />
 
       {/* products */}
-      <h1 className="mt-12 text-xl text-semibold">Shoes For You!</h1>
+      <h1 className="mt-12 text-xl text-semibold">{categories.collection?.name}</h1>
       <Suspense fallback={"loading..."}>
         <ProductList
           categoryId={categories?.collection?._id || "00000000-000000-000000-000000000001"}

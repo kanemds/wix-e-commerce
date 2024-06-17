@@ -26,9 +26,11 @@ const CustomeizeProducts = ({
   }
 
 
+
   const checkInstock = variants.filter(variant =>
     variant.stock?.inStock && variant.stock?.quantity! > 0
   )
+
 
 
   const isVariantInStock = (choices: { [key: string]: string }) => {

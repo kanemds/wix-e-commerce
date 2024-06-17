@@ -8,7 +8,6 @@ import { notFound } from "next/navigation"
 
 const SinglePage = async ({ params }: { params: { slug: string } }) => {
 
-  // console.log(params) // [slug]/page
   const wixClient = await wixClientServer()
 
   const { items: products } = await wixClient.products.queryProducts().eq("slug", params.slug).find()
