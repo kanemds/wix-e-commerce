@@ -15,22 +15,40 @@ import { products } from "@wix/stores"
 //   variants?: any[]
 // }) => {
 const Add = ({
-  variants
+  variants,
+  selected
 }: {
   variants?: products.Variant[],
+  selected?: { [key: string]: string }
 }) => {
 
   let trackInventory: any
   let stockNumber: any
   let inStock: any
 
+
   if (variants?.length === 1) {
     trackInventory = variants[0].stock?.trackQuantity
     stockNumber = variants[0].stock?.quantity
     inStock = variants[0].stock?.inStock
+  } else {
+    variants?.find((product) => {
+      const { Color, Size } = product.choices!
+      const stock = product.stock
+      // console.log(Color)
+      // console.log(Size)
+      if (selected?.Color === Color && selected.Size === Size) {
+        trackInventory = stock?.trackQuantity
+        stockNumber = stock?.quantity
+        inStock = stock?.inStock
+      }
+    })
   }
 
-  console.log(variants)
+  // console.log(trackInventory)
+  // console.log(stockNumber)
+  // console.log(inStock)
+
 
 
   // trackQuantity === false 

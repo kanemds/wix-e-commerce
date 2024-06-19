@@ -18,6 +18,7 @@ const CustomeizeProducts = ({
   const [selectedOptions, setSelectedOptions] = useState<{ [key: string]: string }>({})
 
 
+
   const handleOptionSelect = (optionType: string | undefined, choice: string | undefined) => {
     if (optionType !== undefined && choice !== undefined) {
       setSelectedOptions(prev => ({ ...prev, [optionType]: choice }))
@@ -30,11 +31,15 @@ const CustomeizeProducts = ({
 
   const isVariantInStock = (choices: { [key: string]: string }) => {
 
-    return checkInstock.some(variant => {
+    const isInStock = checkInstock.some(variant => {
       const variantChoices = variant.choices
-      if (!variantChoices) return false
-      return Object.entries(choices).every(([key, value]: [string, string]) => variantChoices[key] === value)
+      if (!variantChoices) return false // filter out the out of stock items
+
+      const check = Object.entries(choices).every(([key, value]: [string, string]) => variantChoices[key] === value)
+      return check
     })
+
+    return isInStock
   }
 
 
@@ -45,16 +50,15 @@ const CustomeizeProducts = ({
   }, [])
 
 
-
   return (
     <>
-
       <div className="flex flex-col gap-6">
         {productOption?.map((option: products.ProductOption) => (
           <div key={option.name} className="flex flex-col gap-4">
             <h4 className="font-medium">Choose a {option.name}</h4>
             <ul className="flex items-center gap-3">
               {option.choices?.map((choice) => {
+
                 const disabled: boolean = !isVariantInStock({
                   ...selectedOptions,
                   [option.name!]: choice.description
@@ -86,7 +90,7 @@ const CustomeizeProducts = ({
 
       </div>
 
-      <Add variants={variants} />
+      <Add variants={variants} selected={selectedOptions} />
     </>
   )
 }
