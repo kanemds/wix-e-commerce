@@ -2,8 +2,9 @@
 
 import useWixClient from "@/hooks/useWixClient"
 import { LoginState } from "@wix/sdk"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import React, { use, useEffect, useState } from "react"
+import Cookies from "js-cookie"
 
 enum MODE {
   LOGIN = "LOGIN",
@@ -31,24 +32,37 @@ const LoginPage
     const [isSuccess, setIsSuccess] = useState(false)
 
     const pathname = usePathname()
+    const router = useRouter()
 
     const formTitle = mode === MODE.LOGIN ? "Log in" : mode === MODE.REGISTER ? "Register" : mode === MODE.RESET_PASSWORD ? "Reset Your Password" : "Verify Your Email"
 
     const buttonTitle = mode === MODE.LOGIN ? "Log in" : mode === MODE.REGISTER ? "Register" : mode === MODE.RESET_PASSWORD ? "Reset" : "Verify"
 
     const wixClient = useWixClient()
+    const isLoggedIn = wixClient.auth.loggedIn()
+
+    if (isLoggedIn) {
+      router.push("/")
+    }
 
     useEffect(() => {
-      if (isLogin && isSuccess) {
+      if (isLogin && isSuccess && !error) {
         setMessage("Logged in Successfully.")
         setIsLogin(false)
         setIsSuccess(false)
-      } else if (isRegister && isSuccess) {
+      } else if (isRegister && isSuccess && !error) {
         setMessage("Register in Successfully.")
         setIsRegister(false)
         setIsSuccess(false)
       }
     }, [isLogin, isRegister, isSuccess])
+
+    useEffect(() => {
+      if (error) {
+        setError("")
+      }
+    }, [username, password, email])
+
 
     const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault()
@@ -69,6 +83,7 @@ const LoginPage
             break
           case MODE.RESET_PASSWORD:
             responseObj = await wixClient.auth.sendPasswordResetEmail(email, window.location.href)
+            setMessage("Password reset email sent. Please check your e-mail.")
             break
           case MODE.EMAIL_VERIFICATION:
             responseObj = await wixClient.auth.processVerification({ verificationCode: emailCode })
@@ -83,8 +98,27 @@ const LoginPage
 
             const tokens = await wixClient.auth.getMemberTokensForDirectLogin(responseObj.data.sessionToken) // to decode the access and refresh token from wix
             console.log(tokens)
-            setIsLogin(false)
-            setIsRegister(false)
+            Cookies.set("refreshToken", JSON.stringify(tokens.refreshToken), { expires: 2 })
+            wixClient.auth.setTokens(tokens)
+            router.push("/")
+            break
+
+          case FAILURE:
+            if (responseObj.errorCode === "invalidEmail" || responseObj.errorCode === "invalidPassword") {
+              setError("Invalid email or password, please try again.")
+            } else if (responseObj.errorCode === "emailAlreadyExists") {
+              setError("Email already exists, please try again.")
+            } else if (responseObj.errorCode === "resetPassword") {
+              setError("You need to reset your password.")
+            } else {
+              setError("Connection error, please try again.")
+            }
+            break
+          case EMAIL_VERIFICATION_REQUIRED:
+            setMode(MODE.EMAIL_VERIFICATION)
+            break
+          case OWNER_APPROVAL_REQUIRED:
+            setMessage("Your account is pending approval.")
             break
           default:
             break

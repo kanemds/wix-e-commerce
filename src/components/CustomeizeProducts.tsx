@@ -5,6 +5,7 @@ import { useEffect, useState } from "react"
 import Add from "./Add"
 
 
+
 const CustomeizeProducts = ({
   productId,
   variants,
@@ -90,7 +91,7 @@ const CustomeizeProducts = ({
 
       </div>
 
-      <Add variants={variants} selected={selectedOptions} />
+      <Add variants={variants} selected={selectedOptions} productId={productId} />
     </>
   )
 }

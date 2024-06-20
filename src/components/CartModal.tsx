@@ -1,15 +1,25 @@
 "use client"
 
+import { useCartStore } from "@/hooks/useCartStore"
+import useWixClient from "@/hooks/useWixClient"
+import { media } from "@wix/sdk"
 import Image from "next/image"
+import { useEffect } from "react"
 
 const CartModal = () => {
 
-  const carItems = true
+  const wixClient = useWixClient()
+  const { cart, isLoading, removeItem } = useCartStore()
+
+
+  console.log(cart)
+
+
 
   return (
     // w-max === maximum content
     <div className="w-max absolute p-4 rounded-md shadow-general bg-white top-12 right-0 flex flex-col gap-6 z-20">
-      {!carItems ? (
+      {!cart.lineItems ? (
         <div>Cart is Empty</div>
       ) : (
         <>
@@ -17,69 +27,43 @@ const CartModal = () => {
           {/* cart list */}
           <div className="flex flex-col gap-8">
             {/* item */}
-            <div className="flex gap-4">
-              <Image
-                src="/backpack.jpg"
-                alt=""
-                width={72}
-                height={96}
-                className="rounded-md object-cover"
-              />
-              <div className="flex flex-col justify-between w-full">
-                {/* top */}
-                <div>
-                  {/* title */}
-                  <div className="flex items-center justify-center gap-8">
-                    <h3 className="font-semibold">Product Name</h3>
-                    <div className="p-1 bg-gray-50 rounded-sm">$40</div>
+            {cart.lineItems.map((item: any) => (
+              <div className="flex gap-4" key={item._id}>
+                {item.image && <Image
+                  src={media.getScaledToFillImageUrl(item.image, 72, 96, {})}
+                  alt=""
+                  width={72}
+                  height={96}
+                  className="rounded-md object-cover"
+                />}
+                <div className="flex flex-col justify-between w-full">
+                  {/* top */}
+                  <div>
+                    {/* title */}
+                    <div className="flex items-center justify-center gap-8">
+                      <h3 className="font-semibold">{item.productName?.original}</h3>
+                      <div className="p-1 bg-gray-50 rounded-sm">${item.price?.amount}</div>
+                    </div>
+                    {/* desc */}
+                    <div className="text-sm text-gray-500">
+                      {item.availability?.status}
+                    </div>
                   </div>
-                  {/* desc */}
-                  <div className="text-sm text-gray-500">
-                    avaiable
+                  {/* bottom */}
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Qty. {item.quantity}</span>
+                    <span className="text-blue-500 cursor-pointer" onClick={() => removeItem(wixClient, item._id!)}>Remove</span>
                   </div>
-                </div>
-                {/* bottom */}
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Qty. 2</span>
-                  <span className="text-blue-500">Remove</span>
                 </div>
               </div>
-            </div>
-            {/* item */}
-            <div className="flex gap-4">
-              <Image
-                src="/backpack.jpg"
-                alt=""
-                width={72}
-                height={96}
-                className="rounded-md object-cover"
-              />
-              <div className="flex flex-col justify-between w-full">
-                {/* top */}
-                <div>
-                  {/* title */}
-                  <div className="flex items-center justify-center gap-8">
-                    <h3 className="font-semibold">Product Name</h3>
-                    <div className="p-1 bg-gray-50 rounded-sm">$40</div>
-                  </div>
-                  {/* desc */}
-                  <div className="text-sm text-gray-500">
-                    avaiable
-                  </div>
-                </div>
-                {/* bottom */}
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Qty. 2</span>
-                  <span className="text-blue-500">Remove</span>
-                </div>
-              </div>
-            </div>
+            ))}
+
           </div>
           {/* subtotal  */}
           <div>
             <div className="flex items-center justify-between font-semibold">
               <span>Subtotal</span>
-              <span>$49</span>
+              <span>${cart?.subtotal?.amount}</span>
             </div>
             <p className="text-gray-500 text-sm mt-2 mb-4">
               Shipping and taxes calculated at checkout
