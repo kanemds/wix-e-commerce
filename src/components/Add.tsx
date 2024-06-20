@@ -2,6 +2,8 @@
 
 import { useState } from "react"
 import { products } from "@wix/stores"
+import useWixClient from "@/hooks/useWixClient"
+import { useCartStore } from "@/hooks/useCartStore"
 
 // const Add = ({
 //   stockNumber,
@@ -15,17 +17,24 @@ import { products } from "@wix/stores"
 //   variants?: any[]
 // }) => {
 const Add = ({
+  productId,
   variants,
   selected
 }: {
-  variants?: products.Variant[],
+  productId?: string
+  variants?: products.Variant[]
   selected?: { [key: string]: string }
 }) => {
+
+  const wixClient = useWixClient()
+  const variantId = "00000000-0000-0000-0000-000000000000"
+  const { addItem, isLoading, removeItem, cart } = useCartStore()
+
+  console.log(cart)
 
   let trackInventory: any
   let stockNumber: any
   let inStock: any
-
 
   if (variants?.length === 1) {
     trackInventory = variants[0].stock?.trackQuantity
@@ -35,8 +44,6 @@ const Add = ({
     variants?.find((product) => {
       const { Color, Size } = product.choices!
       const stock = product.stock
-      // console.log(Color)
-      // console.log(Size)
       if (selected?.Color === Color && selected.Size === Size) {
         trackInventory = stock?.trackQuantity
         stockNumber = stock?.quantity
@@ -44,21 +51,6 @@ const Add = ({
       }
     })
   }
-
-  // console.log(trackInventory)
-  // console.log(stockNumber)
-  // console.log(inStock)
-
-
-
-  // trackQuantity === false 
-  // stock: {trackQuantity: false, quantity: 0, inStock: false}
-  // stock: { trackQuantity: false, inStock: true }
-
-  // trackQuantity === true
-  // stock: {trackQuantity: true, quantity: 20, inStock: true}
-  // stock: {trackQuantity: true, quantity: 0, inStock: false}
-
 
 
   const [quantity, setQuantity] = useState(1)
@@ -79,8 +71,23 @@ const Add = ({
 
   }
 
+  // "975bc5ac-c45f-f81c-fd5c-c909f20d89fa"
 
   const disabled = stockNumber ? (trackInventory === true && (stockNumber <= 0)) : (trackInventory === false && inStock === false || trackInventory === true && inStock === false)
+
+  const add = async () => {
+    const res = await wixClient.currentCart.addToCurrentCart({
+      lineItems: [{
+        catalogReference: {
+          appId: process.env.NEXT_PUBLIC_WIX_STORE_ID!,
+          catalogItemId: productId,
+          ...(variantId && { options: { variantId } })
+        },
+        quantity: quantity
+      }]
+    })
+    console.log(res)
+  }
 
 
 
@@ -109,7 +116,13 @@ const Add = ({
 
         </div>
 
-        <button className="w-36 text-sm rounded-3xl ring-1 ring-cartRed text-cartRed py-2 px-4 hover:bg-cartRed hover:text-white disabled:cursor-not-allowed disabled:bg-pink-200 disabled:text-white disabled:ring-0" disabled={disabled}>Add to Cart</button>
+        <button
+          className="w-36 text-sm rounded-3xl ring-1 ring-cartRed text-cartRed py-2 px-4 hover:bg-cartRed hover:text-white disabled:cursor-not-allowed disabled:bg-pink-200 disabled:text-white disabled:ring-0"
+          disabled={disabled}
+          onClick={() => addItem(wixClient, productId!, variantId, quantity)}
+        // onClick={() => add()}
+
+        >Add to Cart</button>
       </div>
     </div>
   )
