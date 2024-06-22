@@ -97,7 +97,6 @@ const LoginPage
           case SUCCESS:
 
             const tokens = await wixClient.auth.getMemberTokensForDirectLogin(responseObj.data.sessionToken) // to decode the access and refresh token from wix
-            console.log(tokens)
             Cookies.set("refreshToken", JSON.stringify(tokens.refreshToken), { expires: 2 })
             wixClient.auth.setTokens(tokens)
             router.push("/")

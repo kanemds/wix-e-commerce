@@ -12,10 +12,6 @@ const CartModal = () => {
   const { cart, isLoading, removeItem } = useCartStore()
 
 
-  console.log(cart)
-
-
-
   return (
     // w-max === maximum content
     <div className="w-max absolute p-4 rounded-md shadow-general bg-white top-12 right-0 flex flex-col gap-6 z-20">
@@ -42,7 +38,9 @@ const CartModal = () => {
                     {/* title */}
                     <div className="flex items-center justify-center gap-8">
                       <h3 className="font-semibold">{item.productName?.original}</h3>
-                      <div className="p-1 bg-gray-50 rounded-sm">${item.price?.amount}</div>
+                      <div className="p-1 bg-gray-50 rounded-sm">
+                        CAD $ {item.price?.amount}
+                      </div>
                     </div>
                     {/* desc */}
                     <div className="text-sm text-gray-500">
@@ -52,7 +50,11 @@ const CartModal = () => {
                   {/* bottom */}
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500">Qty. {item.quantity}</span>
-                    <span className="text-blue-500 cursor-pointer" onClick={() => removeItem(wixClient, item._id!)}>Remove</span>
+                    <span
+                      className="text-blue-500"
+                      style={{ cursor: isLoading ? "not-allowed" : "pointer" }}
+                      onClick={() => removeItem(wixClient, item._id!)}
+                    >Remove</span>
                   </div>
                 </div>
               </div>
@@ -70,7 +72,7 @@ const CartModal = () => {
             </p>
             <div className="flex justify-between text-sm">
               <button className="rounded-md py-3 px-4 ring-1 ring-gray-300">View Cart</button>
-              <button className="rounded-md py-3 px-4 bg-black text-white">Checkout</button>
+              <button className="rounded-md py-3 px-4 bg-black text-white disabled:cursor-not-allowed disabled:opacity-75" disabled={isLoading}>Checkout</button>
             </div>
           </div>
         </>

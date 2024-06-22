@@ -43,10 +43,13 @@ const CustomeizeProducts = ({
     return isInStock
   }
 
+  console.log(selectedOptions)
+
+  console.log("checkInstock", checkInstock)
 
   useEffect(() => {
     if (Object.keys(selectedOptions).length === 0) {
-      setSelectedOptions({ "Color": checkInstock[0]?.choices?.Color! })
+      setSelectedOptions({ ...checkInstock[0]?.choices })
     }
   }, [])
 
