@@ -10,16 +10,15 @@ const SinglePage = async ({ params }: { params: { slug: string } }) => {
 
   const wixClient = await wixClientServer()
 
-  const { items: products } = await wixClient.products.queryProducts().eq("slug", params.slug).find()
+  const products = await wixClient.products.queryProducts().eq("slug", params.slug).find()
 
-  if (!products[0]) {
+  if (!products.items[0]) {
     return notFound()
   }
 
-  const product = products[0]
+  const product = products.items[0]
 
-
-  console.log("product", product)
+  console.log(product)
 
 
   return (

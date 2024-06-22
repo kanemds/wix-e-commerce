@@ -5,17 +5,7 @@ import { products } from "@wix/stores"
 import useWixClient from "@/hooks/useWixClient"
 import { useCartStore } from "@/hooks/useCartStore"
 
-// const Add = ({
-//   stockNumber,
-//   inStock,
-//   trackInventory,
-//   variants
-// }: {
-//   inStock?: boolean
-//   trackInventory?: boolean
-//   stockNumber: number | null
-//   variants?: any[]
-// }) => {
+
 const Add = ({
   productId,
   variants,
@@ -27,24 +17,29 @@ const Add = ({
 }) => {
 
   const wixClient = useWixClient()
-  const variantId = "00000000-0000-0000-0000-000000000000"
   const { addItem, isLoading, removeItem, cart } = useCartStore()
 
-  console.log(cart)
 
   let trackInventory: any
   let stockNumber: any
   let inStock: any
+  let variantId: any
+
+  console.log(variants)
+  console.log(selected)
+
 
   if (variants?.length === 1) {
     trackInventory = variants[0].stock?.trackQuantity
     stockNumber = variants[0].stock?.quantity
     inStock = variants[0].stock?.inStock
+    variantId = "00000000-0000-0000-0000-000000000000"
   } else {
     variants?.find((product) => {
       const { Color, Size } = product.choices!
       const stock = product.stock
       if (selected?.Color === Color && selected.Size === Size) {
+        variantId = product._id
         trackInventory = stock?.trackQuantity
         stockNumber = stock?.quantity
         inStock = stock?.inStock
@@ -71,24 +66,9 @@ const Add = ({
 
   }
 
-  // "975bc5ac-c45f-f81c-fd5c-c909f20d89fa"
+  console.log(trackInventory, inStock)
 
-  const disabled = stockNumber ? (trackInventory === true && (stockNumber <= 0)) : (trackInventory === false && inStock === false || trackInventory === true && inStock === false)
-
-  const add = async () => {
-    const res = await wixClient.currentCart.addToCurrentCart({
-      lineItems: [{
-        catalogReference: {
-          appId: process.env.NEXT_PUBLIC_WIX_STORE_ID!,
-          catalogItemId: productId,
-          ...(variantId && { options: { variantId } })
-        },
-        quantity: quantity
-      }]
-    })
-    console.log(res)
-  }
-
+  const disabled = Object.keys(selected!).length === 0 ? true : stockNumber ? (trackInventory === true && (stockNumber <= 0)) : (trackInventory === false && inStock === false || trackInventory === true && inStock === false)
 
 
   return (
@@ -119,9 +99,7 @@ const Add = ({
         <button
           className="w-36 text-sm rounded-3xl ring-1 ring-cartRed text-cartRed py-2 px-4 hover:bg-cartRed hover:text-white disabled:cursor-not-allowed disabled:bg-pink-200 disabled:text-white disabled:ring-0"
           disabled={disabled}
-          onClick={() => addItem(wixClient, productId!, variantId, quantity)}
-        // onClick={() => add()}
-
+          onClick={() => addItem(wixClient, productId!, variantId!, quantity)}
         >Add to Cart</button>
       </div>
     </div>
